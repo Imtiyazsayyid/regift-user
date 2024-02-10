@@ -5,4 +5,9 @@
 html,
 body {
   height: 100vh;
+  font-family: "Inter";
+}
+
+.font-poppins {
+  font-family: "Poppins";
 }
