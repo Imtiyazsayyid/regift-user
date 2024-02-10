@@ -5,9 +5,13 @@
 html,
 body {
   height: 100vh;
-  font-family: "Inter";
+  font-family: "Poppins";
 }
 
 .font-poppins {
   font-family: "Poppins";
+}
+
+.font-inter {
+  font-family: "Inter";
 }

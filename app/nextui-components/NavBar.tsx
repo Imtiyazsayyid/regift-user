@@ -82,17 +82,17 @@ export default function NavBar() {
           <Link href="/donor">Home</Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="/donations">
+          <Link color="foreground" href="/donor/donate">
             Donate
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link href="/my-donations" color="foreground">
+          <Link href="/donor/my-donations" color="foreground">
             My Donations
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link href="/contact" color="foreground">
+          <Link href="/donor/contact" color="foreground">
             Contact
           </Link>
         </NavbarItem>
