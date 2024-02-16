@@ -1,31 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
 import {
-  Tabs,
-  Tab,
+  Autocomplete,
+  AutocompleteItem,
+  Button,
   Card,
   CardBody,
   CardHeader,
   Divider,
-  Avatar,
   Image,
-  Button,
   Input,
+  Tab,
+  Tabs,
   Textarea,
-  Autocomplete,
-  AutocompleteItem,
-  Chip,
 } from "@nextui-org/react";
-import { RiGalleryFill, RiMusic2Fill } from "react-icons/ri";
-import { FaCheckCircle, FaVideo } from "react-icons/fa";
-import { IoInformationCircleSharp } from "react-icons/io5";
+import { useEffect, useState } from "react";
 import { CgSoftwareUpload } from "react-icons/cg";
-import { TbBallAmericanFootball } from "react-icons/tb";
+import { FaCheckCircle } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
-import { DonatedItem } from "@/app/interfaces/DonatedItemInterface";
 
-import { CldUploadWidget, CldImage } from "next-cloudinary";
+import { donatedItemSchema } from "@/app/validationSchemas";
+import { CldUploadWidget } from "next-cloudinary";
+import DonorServices from "@/app/Services/DonorServices";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { Category } from "@/app/interfaces/CategoryInterface";
 
 export interface CloudinaryResult {
   url: string;
@@ -33,29 +32,96 @@ export interface CloudinaryResult {
 }
 
 export default function DonatePage() {
-  const categories = [
-    { value: "1", label: "Furniture" },
-    { value: "2", label: "Games" },
-    { value: "3", label: "Electronics" },
-  ];
+  const router = useRouter();
+  const [categories, setCategories] = useState<{ value: string; label: string }[]>([]);
+
+  // const categories = [
+  //   { value: "1", label: "Furniture" },
+  //   { value: "2", label: "Games" },
+  //   { value: "3", label: "Electronics" },
+  // ];
+
+  const [errors, setErrors] = useState({
+    image: "",
+    title: "",
+    description: "",
+    condition: "",
+    categoryId: "",
+  });
+
+  const resetErrors = () => {
+    setErrors({
+      image: "",
+      title: "",
+      description: "",
+      condition: "",
+      categoryId: "",
+    });
+  };
+
+  const validateForm = () => {
+    resetErrors();
+    const validation = donatedItemSchema.safeParse(donatedItem);
+
+    if (!validation.success) {
+      const errorArray = validation.error.errors;
+      console.log({ errorArray });
+
+      for (let error of errorArray) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [error.path[0]]: error.message,
+        }));
+      }
+      return;
+    }
+
+    console.log("here");
+
+    setSelected("verify");
+  };
 
   const condition = [
-    { value: "1", label: "New", color: "success" },
-    { value: "2", label: "Like New", color: "warning" },
-    { value: "3", label: "Good", color: "primary" },
-    { value: "4", label: "Fair", color: "secondary" },
-    { value: "5", label: "Poor", color: "danger" },
+    { value: "new", label: "New" },
+    { value: "like_new", label: "Like New" },
+    { value: "used_good", label: "Good" },
+    { value: "used_fair", label: "Fair" },
+    { value: "used_poor", label: "Poor" },
   ];
 
   const [donatedItem, setDonatedItem] = useState({
-    name: "",
+    title: "",
     description: "",
     image: "",
     condition: "",
-    category: "",
+    categoryId: "",
   });
 
   const [selected, setSelected] = useState("upload-info");
+
+  const makeDonation = async () => {
+    const res = await DonorServices.saveDonatedItem({ ...donatedItem, categoryId: parseInt(donatedItem.categoryId) });
+    if (!res.status) {
+      toast.error("Donation Failed");
+      return;
+    }
+    toast.success("Donation Successful.");
+    router.push("/donor/my-donations");
+  };
+
+  const getAllCategories = async () => {
+    const res = await DonorServices.getAllCategories();
+    if (!res.data) {
+      toast.error("Failed to Get Categories");
+      return;
+    }
+    const formattedCategories = res.data.data.map((cat: Category) => ({ label: cat.name, value: cat.id.toString() }));
+    setCategories(formattedCategories);
+  };
+
+  useEffect(() => {
+    getAllCategories();
+  }, []);
 
   return (
     <div className="flex flex-col p-10 h-[90vh] w-[100vw] items-center justify-center">
@@ -78,7 +144,7 @@ export default function DonatePage() {
             </div>
           }
         >
-          <Card className="w-full lg:w-2/3 h-[400px] md:h-[600px] p-10">
+          <Card className="w-full lg:w-2/3 h-[500px] md:h-[600px] p-10">
             <CardHeader>
               <h1 className="text-3xl font-bold">Upload Details</h1>
             </CardHeader>
@@ -87,14 +153,18 @@ export default function DonatePage() {
               <div className="flex flex-col md:flex-row">
                 <div className="flex flex-col md:p-10 md:pl-0 gap-4 items-center md:items-start">
                   {donatedItem.image && (
-                    <Image className="min-h-[300px] w-full md:max-w-[300px] object-cover" src={donatedItem.image} />
+                    <Image
+                      className="h-[100px] md:min-h-[300px] w-full md:max-w-[300px] object-cover"
+                      src={donatedItem.image}
+                    />
                   )}
                   {!donatedItem.image && (
                     <Image
-                      className="min-h-[300px] md:max-w-[300px] w-full object-cover"
+                      className="h-[100px] max-w-[300px] md:min-h-[300px] md:max-w-[300px] w-full object-cover"
                       src="https://archive.org/download/placeholder-image/placeholder-image.jpg"
                     />
                   )}
+                  {errors.image && <p className="text-xs text-center w-full text-red-500">{errors.image}</p>}
                   <CldUploadWidget
                     options={{
                       sources: ["local"],
@@ -138,7 +208,7 @@ export default function DonatePage() {
                     {({ open }) => (
                       <Button
                         startContent={<CgSoftwareUpload />}
-                        className="w-full"
+                        className="md:w-full"
                         onClick={() => {
                           open();
                         }}
@@ -150,7 +220,7 @@ export default function DonatePage() {
                 </div>
 
                 <Divider orientation="vertical" className="hidden md:block" />
-                <Divider orientation="horizontal" className="block md:hidden mt-10" />
+                <Divider orientation="horizontal" className="block md:hidden mt-10 mb-5" />
 
                 <div className="flex flex-col md:p-10 w-full gap-6 md:gap-8">
                   <Input
@@ -158,9 +228,11 @@ export default function DonatePage() {
                     label="Name"
                     radius="sm"
                     size="lg"
+                    isInvalid={errors.title ? true : false}
+                    errorMessage={errors.title}
                     placeholder="Enter Donated Item Name"
-                    value={donatedItem.name}
-                    onValueChange={(val) => setDonatedItem({ ...donatedItem, name: val })}
+                    value={donatedItem.title}
+                    onValueChange={(val) => setDonatedItem({ ...donatedItem, title: val })}
                     labelPlacement="outside"
                   />
 
@@ -170,6 +242,8 @@ export default function DonatePage() {
                     radius="sm"
                     size="lg"
                     placeholder="Description"
+                    isInvalid={errors.description ? true : false}
+                    errorMessage={errors.description}
                     value={donatedItem.description}
                     onValueChange={(val) => setDonatedItem({ ...donatedItem, description: val })}
                     labelPlacement="outside"
@@ -183,9 +257,11 @@ export default function DonatePage() {
                         placeholder="Pick A Category"
                         defaultItems={categories}
                         labelPlacement="outside"
-                        selectedKey={donatedItem.category}
+                        isInvalid={errors.categoryId ? true : false}
+                        errorMessage={errors.categoryId}
+                        selectedKey={donatedItem.categoryId}
                         onSelectionChange={(val) =>
-                          setDonatedItem({ ...donatedItem, category: (val && val.toString()) || "" })
+                          setDonatedItem({ ...donatedItem, categoryId: (val && val.toString()) || "" })
                         }
                         disableSelectorIconRotation
                       >
@@ -199,6 +275,8 @@ export default function DonatePage() {
                         placeholder="Pick A Condition"
                         defaultItems={condition}
                         selectedKey={donatedItem.condition}
+                        isInvalid={errors.condition ? true : false}
+                        errorMessage={errors.condition}
                         // onValueChange={(val) => setDonatedItem({ ...donatedItem, condition: val })}
                         onSelectionChange={(val) =>
                           setDonatedItem({ ...donatedItem, condition: (val && val.toString()) || "" })
@@ -212,7 +290,7 @@ export default function DonatePage() {
                   </div>
 
                   <div className="mt-2 flex justify-end">
-                    <Button color="primary" endContent={<FiArrowRight />} onClick={() => setSelected("verify")}>
+                    <Button color="primary" endContent={<FiArrowRight />} onClick={validateForm}>
                       Verify
                     </Button>
                   </div>
@@ -231,13 +309,13 @@ export default function DonatePage() {
             </div>
           }
         >
-          <Card className="w-full lg:w-2/3 h-[400px] md:h-[600px] p-10">
+          <Card className="w-full lg:w-2/3 h-[500px] md:h-[600px] p-10">
             <CardHeader>
               <h1 className="text-3xl font-bold">Verify Details</h1>
             </CardHeader>
             <Divider orientation="horizontal" className="my-3" />
             <CardBody className="gap-4">
-              <div className="flex flex-col md:flex-row gap-8 min-h-full overflow-scroll">
+              <div className="flex flex-col md:flex-row gap-8 min-h-full overflow-hidden overflow-y-scroll">
                 <div className="rounded-xl min-h-[100px] max-w-[100px] md:min-h-full md:min-w-[50%] overflow-hidden">
                   <Image
                     className="min-h-[100px] md:min-h-[450px] w-full object-cover"
@@ -247,22 +325,29 @@ export default function DonatePage() {
                     }
                   />
                 </div>
-                <div className="flex flex-col gap-3 py-5 overflow-hidden overflow-y-scroll">
-                  <div>
-                    <p className="text-xs text-gray-500">Name</p>
-                    <p>{donatedItem.name}</p>
+                <div className="flex flex-col justify-between gap-3">
+                  <div className="flex flex-col gap-3 md:py-5 overflow-hidden overflow-y-auto">
+                    <div>
+                      <p className="text-xs text-gray-500">Name</p>
+                      <p>{donatedItem.title}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Description</p>
+                      <p>{donatedItem.description}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Category</p>
+                      <p>{categories.find((cat) => cat.value === donatedItem.categoryId)?.label}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Condition</p>
+                      <p>{condition.find((condition) => condition.value === donatedItem.condition)?.label}</p>
+                    </div>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Description</p>
-                    <p>{donatedItem.description}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Category</p>
-                    <p>{categories.find((cat) => cat.value === donatedItem.category)?.label}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Condition</p>
-                    <p>{condition.find((condition) => condition.value === donatedItem.condition)?.label}</p>
+                    <Button className="w-full" color="primary" onClick={() => makeDonation()}>
+                      Donate
+                    </Button>
                   </div>
                 </div>
               </div>

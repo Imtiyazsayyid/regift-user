@@ -46,18 +46,12 @@ const allowedCondtions = ["new", "like_new", "used_good", "used_fair", "used_poo
 
 const donatedItemSchema = z.object({
   title: z.string({ required_error: "Title is required" }).min(2, "Title is too short").max(100, "Title is too long"),
-  image: z.string({ required_error: "Image is required" }),
+  description: z.string({ required_error: "Description is required" }).min(2, "Description is too short"),
+  image: z.string({ required_error: "Image is required" }).min(1, "Image is required"),
   condition: z.string({ required_error: "Condition is required" }).refine((data) => allowedCondtions.includes(data), {
-    message: "Invalid condition",
+    message: "Condition is required",
   }),
-  approvalStatus: z
-    .string({ required_error: "Approval Status is required" })
-    .refine((data) => allowedApprovalStatus.includes(data), {
-      message: "Invalid approval status",
-    }),
-
-  categoryId: z.number({ required_error: "Category is required" }),
-  donorId: z.number({ required_error: "Donor is required" }),
+  categoryId: z.string({ required_error: "Category is required" }).min(1, "Category is required."),
 });
 
 const categorySchema = z.object({

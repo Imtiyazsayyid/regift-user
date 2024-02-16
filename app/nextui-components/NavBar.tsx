@@ -79,20 +79,22 @@ export default function NavBar() {
 
       <NavbarContent className="hidden sm:flex gap-10" justify="center">
         <NavbarItem isActive>
-          <Link href="/donor">Home</Link>
+          <Link onClick={() => router.push("/donor")} className="cursor-pointer">
+            Home
+          </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="/donor/donate">
+          <Link color="foreground" className="cursor-pointer" onClick={() => router.push("/donor/donate")}>
             Donate
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link href="/donor/my-donations" color="foreground">
+          <Link color="foreground" className="cursor-pointer" onClick={() => router.push("/donor/my-donations")}>
             My Donations
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link href="/donor/contact" color="foreground">
+          <Link color="foreground" className="cursor-pointer" onClick={() => router.push("/donor/contact")}>
             Contact
           </Link>
         </NavbarItem>

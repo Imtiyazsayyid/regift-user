@@ -13,8 +13,17 @@ export default {
   },
 
   // Details
-
   async getDonorDetails() {
     return await Api().get("/details");
+  },
+
+  // Donate
+  async saveDonatedItem(payload) {
+    return await Api().post("/donated-item", payload);
+  },
+
+  // Category
+  async getAllCategories(params) {
+    return await Api().get("/categories", { params });
   },
 };
