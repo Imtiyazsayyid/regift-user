@@ -24,7 +24,7 @@ import { MdLogout } from "react-icons/md";
 import { RiSettings3Fill } from "react-icons/ri";
 import { IoSettingsSharp } from "react-icons/io5";
 import { TokenService } from "../Services/StorageService";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Donor } from "../interfaces/DonorInterface";
 import DonorServices from "../Services/DonorServices";
 import toast from "react-hot-toast";
@@ -32,18 +32,21 @@ import toast from "react-hot-toast";
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const router = useRouter();
+  const currentPath = usePathname();
 
   const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
+    {
+      label: "Home",
+      link: "/donor",
+    },
+    {
+      label: "Donate",
+      link: "/donor/donate",
+    },
+    {
+      label: "My Donations",
+      link: "/donor/my-donations",
+    },
   ];
 
   const signOut = () => {
@@ -78,26 +81,17 @@ export default function NavBar() {
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-10" justify="center">
-        <NavbarItem isActive>
-          <Link onClick={() => router.push("/donor")} className="cursor-pointer">
-            Home
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" className="cursor-pointer" onClick={() => router.push("/donor/donate")}>
-            Donate
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" className="cursor-pointer" onClick={() => router.push("/donor/my-donations")}>
-            My Donations
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" className="cursor-pointer" onClick={() => router.push("/donor/contact")}>
-            Contact
-          </Link>
-        </NavbarItem>
+        {menuItems.map((item) => (
+          <NavbarItem isActive={currentPath === item.link} key={item.link}>
+            <Link
+              onClick={() => router.push(item.link)}
+              className="cursor-pointer"
+              color={currentPath === item.link ? "primary" : "foreground"}
+            >
+              {item.label}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
       <NavbarContent justify="end" className="gap-2">
         <ModeSwitch />
@@ -134,15 +128,15 @@ export default function NavBar() {
         </Dropdown>
       </NavbarContent>
       <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+        {menuItems.map((item) => (
+          <NavbarMenuItem key={item.link} className="py-3">
             <Link
-              color={index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"}
+              color={item.link === currentPath ? "primary" : "foreground"}
               className="w-full"
-              href="#"
               size="lg"
+              onClick={() => router.push(item.link)}
             >
-              {item}
+              {item.label}
             </Link>
           </NavbarMenuItem>
         ))}
