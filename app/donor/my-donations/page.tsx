@@ -95,8 +95,10 @@ const MyDonationsPage = () => {
                   </Chip>
                 </TableCell>
                 <TableCell>
-                  {statusMap[donatedItem.approvalStatus].description.split("\n").map((text) => (
-                    <p className="text-gray-400">{text}</p>
+                  {statusMap[donatedItem.approvalStatus].description.split("\n").map((text, index) => (
+                    <p className="text-gray-400" key={index}>
+                      {text}
+                    </p>
                   ))}
                 </TableCell>
               </TableRow>
