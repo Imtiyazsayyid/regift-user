@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Button, Input } from "@nextui-org/react";
 import { IoMdMail } from "react-icons/io";
-import { FaArrowRight, FaLock } from "react-icons/fa";
+import { FaArrowRight, FaKey, FaLock } from "react-icons/fa";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
@@ -98,7 +98,7 @@ const ForgotPasswordPage = () => {
       {verified.email && !verified.otp && (
         <div className={`w-full md:w-2/3 lg:w-1/2 px-10 mt-10 flex items-end gap-2 ${errors.email && "items-center"}`}>
           <Input
-            type="text"
+            type="password"
             label="OTP"
             placeholder="Eg. 123456"
             value={otp}
@@ -119,13 +119,13 @@ const ForgotPasswordPage = () => {
           <Input
             type="text"
             label="New Password"
-            placeholder="Eg. 123456"
+            placeholder=""
             value={password}
             errorMessage={errors.password}
             isInvalid={errors.password ? true : false}
             onValueChange={(val) => setPassword(val)}
             labelPlacement="outside"
-            startContent={<IoMdMail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />}
+            startContent={<FaKey className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />}
           />
           <Button color="primary" onClick={resetPassword}>
             <FaArrowRight />
