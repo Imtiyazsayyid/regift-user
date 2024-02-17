@@ -12,6 +12,18 @@ export default {
     });
   },
 
+  async sendOTP(payload) {
+    return await Api().post("send-otp", payload);
+  },
+
+  async verifyOTP(payload) {
+    return await Api().post("verify-otp", payload);
+  },
+
+  async resetPassword(payload) {
+    return await Api().post("reset-password", payload);
+  },
+
   // Details
   async getDonorDetails() {
     return await Api().get("/details");

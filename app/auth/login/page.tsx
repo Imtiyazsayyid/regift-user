@@ -106,7 +106,12 @@ const LoginPage = () => {
           />
         </div>
         <div className="my-6">
-          <p className="text-md text-end text-primary font-semibold">Forgot Password?</p>
+          <p
+            className="text-md text-end text-primary font-semibold cursor-pointer"
+            onClick={() => router.push("/auth/forgot-password")}
+          >
+            Forgot Password?
+          </p>
         </div>
         <div>
           <Button color="primary" className="w-full" size="lg" onClick={handleSubmit}>
