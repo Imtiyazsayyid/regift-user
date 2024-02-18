@@ -120,7 +120,12 @@ const LoginPage = () => {
         </div>
 
         <div className="mt-6">
-          <p className="text-md text-center text-primary font-semibold">Don&apos;t have an account?</p>
+          <p
+            className="text-md text-center text-primary font-semibold cursor-pointer"
+            onClick={() => router.push("/auth/register")}
+          >
+            Don&apos;t have an account?
+          </p>
         </div>
       </div>
     </div>

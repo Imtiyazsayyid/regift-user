@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import OrganisationServices from "../../Services/DonorServices";
+import DonorServices from "../../Services/DonorServices";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Button, Input } from "@nextui-org/react";
@@ -36,7 +36,7 @@ const ForgotPasswordPage = () => {
 
   const getOTP = async () => {
     resetErrors();
-    const res = await OrganisationServices.sendOTP({ email });
+    const res = await DonorServices.sendOTP({ email });
 
     if (!res.data.status) {
       setErrors({ ...errors, email: "Email Not Found." });
@@ -49,7 +49,7 @@ const ForgotPasswordPage = () => {
 
   const verifyOTP = async () => {
     resetErrors();
-    const res = await OrganisationServices.verifyOTP({ email, otp });
+    const res = await DonorServices.verifyOTP({ email, otp });
 
     if (!res.data.status) {
       setErrors({ ...errors, otp: "OTP not valid" });
@@ -62,7 +62,7 @@ const ForgotPasswordPage = () => {
 
   const resetPassword = async () => {
     resetErrors();
-    const res = await OrganisationServices.resetPassword({ email, otp, newPassword: password });
+    const res = await DonorServices.resetPassword({ email, otp, newPassword: password });
 
     if (!res.data.status) {
       setErrors({ ...errors, password: "A problem has occured." });

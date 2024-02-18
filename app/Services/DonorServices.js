@@ -12,6 +12,14 @@ export default {
     });
   },
 
+  async register(payload) {
+    return await Api().post("register", payload);
+  },
+
+  async deleteDonor(params) {
+    return await Api().get("/delete", { params });
+  },
+
   async sendOTP(payload) {
     return await Api().post("send-otp", payload);
   },
