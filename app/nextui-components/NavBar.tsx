@@ -22,7 +22,7 @@ import ModeSwitch from "./ModeSwitch";
 import { CiSettings } from "react-icons/ci";
 import { MdLogout } from "react-icons/md";
 import { RiSettings3Fill } from "react-icons/ri";
-import { IoSettingsSharp } from "react-icons/io5";
+import { IoPersonOutline, IoSettingsSharp } from "react-icons/io5";
 import { TokenService } from "../Services/StorageService";
 import { usePathname, useRouter } from "next/navigation";
 import { Donor } from "../interfaces/DonorInterface";
@@ -116,6 +116,16 @@ export default function NavBar() {
             <DropdownItem key="settings" startContent={<IoSettingsSharp className="w-[15px] h-[15px]" />}>
               My Settings
             </DropdownItem>
+
+            <DropdownItem
+              key="profile"
+              className="h-14 gap-2"
+              startContent={<IoPersonOutline className="w-[15px] h-[15px]" />}
+              onClick={() => router.push('/donor/profile')}
+            >
+              Profile
+            </DropdownItem>
+
             <DropdownItem
               key="logout"
               color="danger"

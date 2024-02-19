@@ -37,6 +37,11 @@ export default {
     return await Api().get("/details");
   },
 
+  // Donor
+  async saveDonor(payload) {
+    return await Api().post("/donors", payload);
+  },
+
   // Donate
   async getAllDonatedItems(params) {
     return await Api().get("/donated-items", { params });
