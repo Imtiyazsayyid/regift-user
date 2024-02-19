@@ -20,17 +20,7 @@ interface Props {
   address?: string | null;
 }
 
-const UserForm = ({
-  id,
-  firstName,
-  lastName,
-  email,
-  password,
-  gender,
-  profileImg,
-  address,
-}: Props) => {
-
+const UserForm = ({ id, firstName, lastName, email, password, gender, profileImg, address }: Props) => {
   const router = useRouter();
 
   const [donorDetails, setDonorDetails] = useState({
@@ -88,11 +78,10 @@ const UserForm = ({
       password: "",
       gender: "",
     }));
-    
+
     const validation = donorSchema.safeParse(donorDetails);
 
     if (!validation.success) {
-      console.log(validation.error.errors);
       const errorArray = validation.error.errors;
 
       for (let error of errorArray) {
@@ -105,47 +94,44 @@ const UserForm = ({
     }
 
     const res = await DonorServices.saveDonor(donorDetails);
-    console.log(res);
+
     if (!res.data.status) {
       toast.error("Failed to Save");
       return;
     }
 
     toast.success("Saved Successfully");
+    router.back();
   };
 
   return (
     <div className="h-[100vh] flex justify-center items-center flex-col gap-5 py-32">
       <div className="flex gap-2 items-center">
         {/* <BsGlobe className="w-6 h-6" /> */}
-        <h1 className="text-2xl font-bold">Your Credentials</h1>
+        <h1 className="text-2xl font-bold">Your Details</h1>
       </div>
-      <div className="flex flex-col gap-8 mt-12">
+      <div className="flex flex-col gap-8 mt-12 w-full md:w-1/2 px-4">
         <Input
           type="text"
           label="First Name"
           radius="sm"
           size="md"
           value={donorDetails?.firstName}
-          onValueChange={(val) =>
-            setDonorDetails({ ...donorDetails, firstName: val })
-          }
-          startContent={
-            <FaUser className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
-          }
+          isInvalid={errors.firstName ? true : false}
+          errorMessage={errors.firstName}
+          onValueChange={(val) => setDonorDetails({ ...donorDetails, firstName: val })}
+          startContent={<FaUser className="text-xl text-default-400 pointer-events-none flex-shrink-0" />}
         />
         <Input
           type="text"
           label="Last Name"
           radius="sm"
           size="md"
+          isInvalid={errors.lastName ? true : false}
+          errorMessage={errors.lastName}
           value={donorDetails?.lastName}
-          onValueChange={(val) =>
-            setDonorDetails({ ...donorDetails, lastName: val })
-          }
-          startContent={
-            <FaUser className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
-          }
+          onValueChange={(val) => setDonorDetails({ ...donorDetails, lastName: val })}
+          startContent={<FaUser className="text-xl text-default-400 pointer-events-none flex-shrink-0" />}
         />
         <Input
           type="email"
@@ -154,36 +140,31 @@ const UserForm = ({
           size="md"
           value={donorDetails?.email}
           readOnly
-          onValueChange={(val) =>
-            setDonorDetails({ ...donorDetails, email: val })
-          }
-          startContent={
-            <IoMdMail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-          }
+          disabled
+          onValueChange={(val) => setDonorDetails({ ...donorDetails, email: val })}
+          startContent={<IoMdMail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />}
         />
         <Input
           type="password"
           label="Password"
           radius="sm"
           size="md"
+          isInvalid={errors.password ? true : false}
+          errorMessage={errors.password}
           value={donorDetails?.password}
-          onValueChange={(val) =>
-            setDonorDetails({ ...donorDetails, password: val })
-          }
-          startContent={
-            <IoKey className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-          }
+          onValueChange={(val) => setDonorDetails({ ...donorDetails, password: val })}
+          startContent={<IoKey className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />}
         />
         <Select
           items={genders}
           label="Gender"
           placeholder={donorDetails?.gender}
           radius="sm"
+          isInvalid={errors.gender ? true : false}
+          errorMessage={errors.gender}
           size="md"
-          value={donorDetails.gender} 
-          onChange={(e) =>
-            setDonorDetails({ ...donorDetails, gender: e.target.value })
-          }
+          value={donorDetails.gender}
+          onChange={(e) => setDonorDetails({ ...donorDetails, gender: e.target.value })}
         >
           {(gender) => (
             <SelectItem key={gender.value} value={gender.value}>
@@ -196,31 +177,23 @@ const UserForm = ({
           label="Address"
           radius="sm"
           size="md"
-          onValueChange={(val) =>
-            setDonorDetails({ ...donorDetails, address: val })
-          }
+          onValueChange={(val) => setDonorDetails({ ...donorDetails, address: val })}
         />
       </div>
 
-      <div className="mt-6" style={{ display: 'flex', gap: '16px' }}>
+      <div className="mt-6" style={{ display: "flex", gap: "16px" }}>
         <Button
           color="primary"
           className="w-full"
           size="lg"
           onClick={() => {
             handleSave();
-            router.back();
           }}
         >
           Save
         </Button>
 
-        <Button
-          color="danger"
-          className="w-full"
-          size="lg"
-          onClick={() => router.back()}
-        >
+        <Button color="danger" className="w-full" size="lg" onClick={() => router.back()}>
           Cancel
         </Button>
       </div>

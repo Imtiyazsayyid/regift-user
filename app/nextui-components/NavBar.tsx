@@ -28,6 +28,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Donor } from "../interfaces/DonorInterface";
 import DonorServices from "../Services/DonorServices";
 import toast from "react-hot-toast";
+import { FaUser } from "react-icons/fa";
 
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -120,8 +121,8 @@ export default function NavBar() {
             <DropdownItem
               key="profile"
               className="h-14 gap-2"
-              startContent={<IoPersonOutline className="w-[15px] h-[15px]" />}
-              onClick={() => router.push('/donor/profile')}
+              startContent={<FaUser className="w-[15px] h-[15px]" />}
+              onClick={() => router.push("/donor/profile")}
             >
               Profile
             </DropdownItem>
